@@ -50,86 +50,84 @@
 //
 // read, write, duplex, transform - !!!
 
-const express = require('express')
+import express, { Request, Response } from "express";
 
 const users = [
   {
-    name: 'Oleh',
+    name: "Oleh",
     age: 20,
-    gender: 'male'
+    gender: "male",
   },
   {
-    name: 'Anton',
+    name: "Anton",
     age: 10,
-    gender: 'male'
+    gender: "male",
   },
   {
-    name: 'Inokentiy',
+    name: "Inokentiy",
     age: 25,
-    gender: 'female'
+    gender: "female",
   },
   {
-    name: 'Anastasiya',
+    name: "Anastasiya",
     age: 15,
-    gender: 'female'
+    gender: "female",
   },
   {
-    name: 'Cocos',
+    name: "Cocos",
     age: 25,
-    gender: 'other',
+    gender: "other",
   },
-]
+];
 
 const app = express();
 
-
 app.use(express.json());
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }));
 
 // CRUD - create, read, update, delete
 
-app.get('/users', (req, res) => {
-  res.status(200).json(users)
-})
+app.get("/users", (req: Request, res: Response) => {
+  res.status(200).json(users);
+});
 
-app.get('/users/:id', (req, res) => {
+app.get("/users/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   res.status(200).json(users[+id]);
-})
+});
 
-app.post('/users', (req, res)=>{
+app.post("/users", (req: Request, res: Response) => {
   users.push(req.body);
 
   res.status(201).json({
-    message: "User created."
+    message: "User created.",
   });
-})
+});
 
-app.put('/users/:id', (req, res)=>{
+app.put("/users/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   users[+id] = req.body;
 
   res.status(200).json({
-    message: 'User updated',
+    message: "User updated",
     data: users[+id],
-  })
-})
+  });
+});
 
-app.delete('/users/:id', (req, res)=>{
+app.delete("/users/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   users.splice(+id, 1);
 
   res.status(200).json({
-    message: 'User deleted',
-  })
-})
+    message: "User deleted",
+  });
+});
 
 const PORT = 5001;
 
 app.listen(PORT, () => {
-  console.log(`Server has started on PORT ${PORT} 🥸`)
-})
-
+  console.log(`Server has started on PORT ${PORT} 🥸`);
+});
