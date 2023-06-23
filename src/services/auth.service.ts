@@ -107,11 +107,15 @@ class AuthService {
     userId: string
   ): Promise<void> {
     try {
-      const oldPasswords = await OldPassword.find({ _userId: userId });
+      const [oldPasswords, user] = await Promise.all([
+        OldPassword.find({ _userId: userId }).lean(),
+        User.findById(userId).select("password"),
+      ]);
+      const passwords = [...oldPasswords, { password: user.password }];
       await Promise.all(
-        oldPasswords.map(async ({ password: hash }) => {
+        passwords.map(async ({ password: hash }) => {
           const isMatched = await passwordService.compare(
-            dto.oldPassword,
+            dto.newPassword,
             hash
           );
           if (isMatched) {
@@ -119,16 +123,6 @@ class AuthService {
           }
         })
       );
-
-      const user = await User.findById(userId).select("password");
-
-      const isMatched = await passwordService.compare(
-        dto.oldPassword,
-        user.password
-      );
-      if (!isMatched) {
-        throw new ApiError("Wrong old password", 400);
-      }
 
       const newHash = await passwordService.hash(dto.newPassword);
       await Promise.all([
