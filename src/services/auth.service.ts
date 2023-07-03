@@ -13,6 +13,8 @@ import { IUser } from "../types/user.type";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
+import {smsService} from "./sms.service";
+import {ESmsActions} from "../enums/sms.enum";
 
 class AuthService {
   public async register(data: IUser): Promise<void> {
@@ -35,6 +37,7 @@ class AuthService {
           name: data.name,
           actionToken,
         }),
+        smsService.sendSms(data.phone, ESmsActions.WELCOME),
       ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
